@@ -21,7 +21,7 @@ m %>%
 # Piping in the data to leaflet lets us use ~ instead of specificing the data frame all the time
 # Map with circle markers for each beer
 data %>%
-  leaflet() %>%
+  leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
   addProviderTiles("CartoDB") %>%
   addCircleMarkers(lng = ~lon, 
                    lat = ~lat,
@@ -34,7 +34,7 @@ data %>%
 # Map with cluster indicators for beer locations
 # Might be nice to have a "point" or "cluster" option in the Shiny App
 complete_data %>%
-  leaflet() %>%
+  leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
   addProviderTiles("CartoDB") %>%
   addCircleMarkers(lng = ~lon, 
                    lat = ~lat,
@@ -43,7 +43,7 @@ complete_data %>%
                                    "<br/>", UT_brewery),
                    radius = 3,
                    color = "green",
-                   clusterOptions = markerClusterOptions())
+                   clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE))
 
 # see http://colorbrewer2.org/ for interactive examples
 pal <- colorFactor(palette = c("red", "blue", "#9b4a11"), 
