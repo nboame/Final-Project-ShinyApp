@@ -2,8 +2,8 @@ library(leaflet)
 library(dplyr)
 library(leaflet.extras)
 
-data <- readRDS("beer_data_loc_all.rds")
-data <- data[1:25,]
+complete_data <- readRDS("beer_data_loc_all.rds")
+data <- complete_data[1:25,]
 
 
 m <-leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
@@ -34,13 +34,15 @@ data %>%
 # Map with cluster indicators for beer locations
 # Might be nice to have a "point" or "cluster" option in the Shiny App
 complete_data %>%
+  filter(UT_sub_style == "IPA - Red") %>%
   leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
   addProviderTiles("CartoDB") %>%
   addCircleMarkers(lng = ~lon, 
                    lat = ~lat,
                    popup = ~paste0("<b>", UT_beer_name, "</b>", 
                                    "<br/>", UT_sub_style,
-                                   "<br/>", UT_brewery),
+                                   "<br/>", UT_brewery,
+                                   "<br/>", country),
                    radius = 3,
                    color = "green",
                    clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE))
