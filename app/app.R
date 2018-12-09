@@ -31,7 +31,7 @@ ui <- navbarPage(strong("TravelBeeR"),
                                      c("Points", "Clusters"), selected = "Clusters")
                         ),
                         mainPanel(
-                          leafletOutput("selected_map")
+                          leafletOutput("selected_map", height=625)
                       )
                     )
            )

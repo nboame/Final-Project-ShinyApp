@@ -8,7 +8,7 @@ data <- complete_data[1:25,]
 
 m <-leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
   addProviderTiles("CartoDB") %>%
-  # setView(lng = -52.7126, lat = 47.5615, zoom = 1)
+  setView(lng = -52.7126, lat = 47.5615, zoom = 1)
 
 m %>%
   # If we don't use setView and use addMarkers it will automatically zoom to include all marked points
@@ -49,7 +49,8 @@ complete_data %>%
                                    "<br/>", country),
                    radius = 3,
                    color = ~pal(UT_rating),
-                   clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE))
+                   clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE)) %>%
+
 
 
 # Without clusters
