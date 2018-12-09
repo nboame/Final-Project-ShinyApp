@@ -34,7 +34,7 @@ data %>%
 # Map with cluster indicators for beer locations
 # Might be nice to have a "point" or "cluster" option in the Shiny App
 complete_data %>%
-  filter(UT_sub_style == "IPA - Red") %>%
+  filter(UT_sub_style == beer_style_str) %>%
   leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
   addProviderTiles("CartoDB") %>%
   addCircleMarkers(lng = ~lon, 
