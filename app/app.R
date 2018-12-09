@@ -31,7 +31,7 @@ ui <- navbarPage(strong("TravelBeeR"),
                                      c("Points", "Clusters"), selected = "Clusters")
                         ),
                         mainPanel(
-                          leafletOutput("beer_map")
+                          leafletOutput("selected_map")
                       )
                     )
            )
@@ -48,7 +48,7 @@ server <- function(input, output) {
       filter(UT_sub_style == input$styleInput)
   })
   
-  output$beer_map <- renderLeaflet(
+  mapClusters <- reactive({
     filtered() %>%
       leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
       addProviderTiles("CartoDB") %>%
@@ -58,14 +58,48 @@ server <- function(input, output) {
                                        "<br/>", UT_sub_style,
                                        "<br/>", UT_brewery,
                                        "<br/>", country),
-                       radius = 2,
+                       radius = 3,
+                       color = ~pal(UT_rating),
+                       clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE))%>%
+      addLegend(pal = pal, 
+                opacity = 0.5,
+                values = c(0:5),
+                title = "Untappd Rating",
+                position = "bottomright",
+                bins = 5)
+  })
+  
+  mapPoints <- reactive({
+    filtered() %>%
+      leaflet(options = leafletOptions(minZoom = 1, dragging = TRUE)) %>%
+      addProviderTiles("CartoDB") %>%
+      addCircleMarkers(lng = ~lon, 
+                       lat = ~lat,
+                       popup = ~paste0("<b>", UT_beer_name, "</b>", 
+                                       "<br/>", UT_sub_style,
+                                       "<br/>", UT_brewery,
+                                       "<br/>", country),
+                       radius = 3,
                        color = ~pal(UT_rating)) %>%
       addLegend(pal = pal, 
                 opacity = 0.5,
                 values = c(0:5),
                 title = "Untappd Rating",
                 position = "bottomright",
-                bins = 5))
+                bins = 5)
+  })
+  
+  # Return the requested graph
+  mapInput <- reactive({
+    switch(input$pointDisplay,
+           "Points" = mapPoints(),
+           "Clusters" = mapClusters()
+    )
+  })
+  
+  output$selected_map <- renderLeaflet({ 
+    mapInput()
+  })
     
     output$styleOutput <- renderUI({
       selectInput("styleInput", "Beer Style",
