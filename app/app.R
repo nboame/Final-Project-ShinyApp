@@ -2,10 +2,14 @@ library(shiny)
 library(dplyr)
 library(markdown)
 
-#data <- readRDS("beer_data_loc_all.rds")
+#complete_data <- readRDS("beer_data_loc_all.rds")
 
 complete_data$UT_sub_style <- as.character(complete_data$UT_sub_style)
-typeof(complete_data$UT_sub_style)
+
+pal <- colorNumeric(
+  palette = "YlOrRd",
+  domain = c(0:5))
+
 
 ui <- navbarPage(strong("TravelBeeR"),
            tabPanel("Legal Drinking Age",
@@ -36,11 +40,11 @@ ui <- navbarPage(strong("TravelBeeR"),
 
 server <- function(input, output) {
   filtered <- reactive({
-    if (is.null(input$styleInput)) {
-      return(NULL)
+    if (input$styleInput == "-- ALL STYLES --") {
+      return(complete_data)
     } 
     
-    data %>%
+    complete_data %>%
       filter(UT_sub_style == input$styleInput)
   })
   
@@ -54,7 +58,7 @@ server <- function(input, output) {
                                        "<br/>", UT_sub_style,
                                        "<br/>", UT_brewery,
                                        "<br/>", country),
-                       radius = 3,
+                       radius = 2,
                        color = ~pal(UT_rating)) %>%
       addLegend(pal = pal, 
                 opacity = 0.5,
@@ -65,8 +69,8 @@ server <- function(input, output) {
     
     output$styleOutput <- renderUI({
       selectInput("styleInput", "Beer Style",
-                  sort(unique(data$UT_sub_style), decreasing = TRUE),
-                  selected = "IPA - Red")
+                  c("-- ALL STYLES --", sort(unique(complete_data$UT_sub_style))),
+                  selected = "-- ALL STYLES --")
     })
 }
 
