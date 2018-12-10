@@ -69,7 +69,7 @@ complete_data %>%
             opacity = 0.5,
             values = c(0:5),
             title = "Untappd Rating",
-            position = "bottomright",
+            position = "bottomleft",
             bins = 5)
 
 
